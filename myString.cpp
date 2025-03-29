@@ -165,6 +165,55 @@ public:
         return *this;
     }
 
+    // delete
+    mystring erase(size_t pos, size_t len = -1) {
+        if (pos > mLen) return *this;
+
+        if (len == 0 || pos == mLen) {
+            return *this;
+        }
+
+        if (len == -1 || pos + len > mLen) {
+            len = mLen - pos;
+        }
+
+        for (size_t i = pos; i + len < mLen; i++) {
+            mData[i] = mData[i + len];
+        }
+
+        mLen -= len;
+        mData[mLen] = '\0';
+
+        return *this;
+    }
+
+    mystring& operator+(const char* str) {
+        if (str == nullptr) {
+            return *this;
+        }
+
+        size_t len = strlen(str);
+        if (len == 0) {
+            return *this;
+        }
+
+        size_t newLen = mLen + len;
+
+        if (newLen + 1 > mCapacity) {
+            reserve(newLen + 1);
+        }
+
+        memcpy(mData + mLen, str, len);
+        mLen = newLen;
+        mData[mLen] = '\0';
+
+        return *this;
+    }
+    
+    size_t size() {
+        return mLen;
+    }
+
 private:
     void reserve (const size_t capacity) {
         if (capacity <= mCapacity) return;
@@ -206,6 +255,13 @@ int main()
     s1.insert('a', 2);
     std::cout << "mystring " << s1.get_mystring() << std::endl;
     s1.insert("bbbbbbbb", 3);
-    std::cout << "mystring " << s1.get_mystring() << std::endl;
+    std::cout << "mystring " << s1.get_mystring() << " size: " << s1.size() << std::endl;
+
+    s1.erase(2, 3);
+    std::cout << "mystring " << s1.get_mystring() << " size: " << s1.size() << std::endl;
+
+    interview::mystring s2 = s1 + "1111";
+    std::cout << "mystring " << s2.get_mystring() << " size: " << s2.size() << std::endl;
+
     return 0;
 }
